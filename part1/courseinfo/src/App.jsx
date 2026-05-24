@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
-const Header = (props) => {
+const Header = ({ course }) => {
   return (
     <>
-      <h1>{props.course}</h1>
+      <h1>{course}</h1>
     </>
   )
 }
@@ -11,9 +11,9 @@ const Header = (props) => {
 const Content = (contentInfoProps) => {
   return (
     <>
-    <p>{contentInfoProps.parts[0].name} {contentInfoProps.parts[0].exercises}</p>
-    <p>{contentInfoProps.parts[1].name} {contentInfoProps.parts[1].exercises}</p>
-    <p>{contentInfoProps.parts[2].name} {contentInfoProps.parts[2].exercises}</p>
+      <p>{contentInfoProps.parts[0].name} {contentInfoProps.parts[0].exercises}</p>
+      <p>{contentInfoProps.parts[1].name} {contentInfoProps.parts[1].exercises}</p>
+      <p>{contentInfoProps.parts[2].name} {contentInfoProps.parts[2].exercises}</p>
     </>
   )
 }
@@ -45,9 +45,9 @@ const App = () => {
 
   return (
     <div>
-      <Header course={course}/>
-      <Content parts={parts}/>
-      <Total parts={parts}/>
+      <Header course={course} />
+      <Content parts={parts} />
+      <Total parts={parts} />
     </div>
   )
 }
