@@ -5,40 +5,37 @@ const Statistics = ({ good, neutral, bad, all, positiveFb, sum }) => {
     return (
       <>
         <Title text={"Statistics"} />
-        <StatisticLine text={"Good"} value={good} />
-        <StatisticLine text={"Neutral"} value={neutral} />
-        <StatisticLine text={"Bad"} value={bad} />
-        <StatisticLine text={"All"} value={all} />
-        <Average sum={sum} total={all} />
-        <Positive sumOfPosFb={positiveFb} total={all} />
+        <table>
+          <tbody>
+            <StatisticLine text={"Good"} value={good} />
+            <StatisticLine text={"Neutral"} value={neutral} />
+            <StatisticLine text={"Bad"} value={bad} />
+            <StatisticLine text={"All"} value={all} />
+            <Average sum={sum} total={all} />
+            <Positive sumOfPosFb={positiveFb} total={all} />
+          </tbody>
+        </table>
       </>
     )
   }
-  return <>
-    <div>
-      <p>No Feedback given</p>
-    </div>
-  </>
+  return <p>No Feedback given</p>
 }
+
 
 const Title = ({ text }) => <div><h1>{text}</h1></div>
 const Button = ({ handler, text }) => <button onClick={handler}>{text}</button>
-const StatisticLine = ({ text, value }) => <p>{text} {value}</p>
+const StatisticLine = ({ text, value }) => <tr><td>{text}</td><td>{value}</td></tr>
 const Average = ({ sum, total }) => {
   if (total < 2 || sum == 0) {
-    return <p>Not Enough Feedback</p>
+    return <tr><td>Average</td><td>Zero</td></tr>
   }
-  return <>
-    <p>Average {sum / total}</p>
-  </>
+  return <tr><td>Average</td><td>{sum / total}</td></tr>
 }
 const Positive = ({ sumOfPosFb, total }) => {
   if (total < 1 || sumOfPosFb == 0) {
-    return <p>Not Enough Feedback</p>
+    return <tr><td>Positive</td>zero<td></td></tr>
   }
-  return <>
-    <p>Positive {(sumOfPosFb / total) * 100} %</p>
-  </>
+  return <tr><td>Positive</td><td>{(sumOfPosFb / total) * 100}%</td></tr>
 }
 
 function App() {
