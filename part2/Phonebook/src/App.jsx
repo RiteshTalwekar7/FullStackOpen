@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import SearchFilter from './components/SearchFilter';
 import PersonForm from './components/PersonForm';
 import axios from 'axios';
+import phonebook from './services/phonebook';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,30 +13,28 @@ const App = () => {
 
   useEffect(() => {
     console.log('Effect');
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled');
-        setPersons(response.data);
+    phonebook
+      .getAll()
+      .then(data => {
+        setPersons(data);
       })
   }, [])
 
 
 
   const handleNewName = (event) => {
-    console.log(event.target.value);
     setNewName(event.target.value);
   }
 
   const handleNewNumber = (event) => {
-    console.log(event.target.value);
     setNewNumber(event.target.value);
   }
 
-  const handleSearch = () => {
-    console.log(event.target.value);
+  const handleSearch = (event) => {
+    console.log(event.target.value.toLowerCase());
     setSearchName(event.target.value);
-    setFilteredArray(persons.filter(person => person.name.toLowerCase().includes(searchName)));
+    console.log(persons.filter(person => person.name.toLowerCase().includes(searchName)));
+    setFilteredArray(persons.filter(person => person.name.toLowerCase().includes(searchName.toLowerCase())));
   }
 
   const addInfo = (event) => {
@@ -44,14 +43,18 @@ const App = () => {
       return alert(`${newName} already exists in the phonebook`)
     }
     const newPerson = {
-      id: persons.length + 1,
       name: newName,
       number: newNumber,
+      id: persons.length + 1
     }
-    setPersons(persons.concat(newPerson));
+    phonebook
+      .create(newPerson)
+      .then(data => {
+        console.log(data);
+        setPersons(persons.concat(data));
+      })
   }
 
-  console.log(persons)
   return <>
     <div>
       <h1>Phonebook</h1>
@@ -59,7 +62,33 @@ const App = () => {
       <h2>Add a new</h2>
       <PersonForm addInfo={addInfo} newName={newName} newNumber={newNumber} handleNewName={handleNewName} handleNewNumber={handleNewNumber} />
       <h2>Numbers</h2>
-      {searchName ? filteredArray.map(person => <p key={person.key}>{person.name} {person.number}</p>) : persons.map(person => <p key={person.name}>{person.name} {person.number}</p>)}
+      {searchName ?
+        filteredArray.map(person =>
+          <p key={person.name}>{person.name} {person.number}
+            <button onClick={() => {
+              if (confirm(`Delete ${person.name} ?`)) {
+                phonebook
+                  .remove(person.id)
+                  .then(response => console.log(response.data));
+              } else {
+                alert(`You have cancelled the removal of ${person.name}`)
+              }
+            }}>delete</button>
+          </p>
+        ) :
+        persons.map(person =>
+          <p key={person.name}>{person.name} {person.number}
+            <button onClick={() => {
+              if (confirm(`Delete ${person.name} ?`)) {
+                phonebook
+                  .remove(person.id)
+                  .then(response => console.log(response.data));
+              } else {
+                alert(`You have cancelled the removal of ${person.name}`)
+              }
+            }}>delete</button>
+          </p>
+        )}
     </div>
   </>
 }
