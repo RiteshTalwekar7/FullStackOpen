@@ -3,6 +3,7 @@ import SearchFilter from './components/SearchFilter';
 import PersonForm from './components/PersonForm';
 import axios from 'axios';
 import phonebook from './services/phonebook';
+import Notification from './components/ErrorMessage';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [searchName, setSearchName] = useState('');
   const [filteredArray, setFilteredArray] = useState([]);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     console.log('Effect');
@@ -51,6 +53,10 @@ const App = () => {
       .create(newPerson)
       .then(data => {
         console.log(data);
+        setErrorMsg(`Added ${newPerson.name}`);
+        setTimeout(() => {
+          setErrorMsg(null);
+        }, 3000)
         setPersons(persons.concat(data));
       })
   }
@@ -58,6 +64,7 @@ const App = () => {
   return <>
     <div>
       <h1>Phonebook</h1>
+      <Notification message={errorMsg} />
       <SearchFilter searchName={searchName} handleSearch={handleSearch} />
       <h2>Add a new</h2>
       <PersonForm addInfo={addInfo} newName={newName} newNumber={newNumber} handleNewName={handleNewName} handleNewNumber={handleNewNumber} />
@@ -69,7 +76,9 @@ const App = () => {
               if (confirm(`Delete ${person.name} ?`)) {
                 phonebook
                   .remove(person.id)
-                  .then(response => console.log(response.data));
+                  .then(response => {
+                    console.log(response.name);
+                  });
               } else {
                 alert(`You have cancelled the removal of ${person.name}`)
               }
@@ -82,7 +91,12 @@ const App = () => {
               if (confirm(`Delete ${person.name} ?`)) {
                 phonebook
                   .remove(person.id)
-                  .then(response => console.log(response.data));
+                  .then((response) => {
+                    setErrorMsg(`Deleted ${response.data.name}`);
+                    setTimeout(() => {
+                      setErrorMsg(null);
+                    }, 3000)
+                  });
               } else {
                 alert(`You have cancelled the removal of ${person.name}`)
               }

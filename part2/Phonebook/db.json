@@ -14,11 +14,6 @@
       "name": "Dan Abramov",
       "number": "12-43-234345",
       "id": "3"
-    },
-    {
-      "name": "Nandini Kshirsagar",
-      "number": "8600486098",
-      "id": "2PCXVd2xW0I"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
