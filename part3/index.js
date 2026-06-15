@@ -1,5 +1,15 @@
 import express from "express";
+import cors from 'cors';
+import { configDotenv } from "dotenv";
+
+configDotenv();
+const PORT = process.env.PORT || 3001;
+
 const app = express();
+
+
+app.use(cors());
+app.use(express.json());
 
 let notes = [
   {
@@ -19,14 +29,8 @@ let notes = [
   }
 ];
 
-app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.send('<h1>Hello World!</h1>');
-})
-
-app.get('/api/notes', (req, res) => {
-  res.json(notes);
+app.get('/api/notes', (request, response) => {
+  response.json(notes);
 })
 
 const generateId = () => {
@@ -39,10 +43,10 @@ const generateId = () => {
   return newId;
 }
 
-app.post('/api/notes', (req, res) => {
-  const body = req.body;
+app.post('/api/notes', (request, response) => {
+  const body = request.body;
   if (!body.content) {
-    return res.status(400).json({
+    return response.status(400).json({
       error: 'content is missing'
     })
   }
@@ -53,27 +57,27 @@ app.post('/api/notes', (req, res) => {
   }
 
   notes = notes.concat(newNote);
-  res.json(notes);
+  response.json(newNote);
 })
 
 
-app.get('/api/notes/:id', (req, res) => {
-  const { id } = req.params;
+app.get('/api/notes/:id', (request, response) => {
+  const { id } = request.params;
   const note = notes.find(note => note.id === id);
   if (note) {
-    res.json(note);
+    response.json(note);
   } else {
-    res.status(404).end();
+    response.status(404).end();
   }
 });
 
-app.delete('/api/notes/:id', (req, res) => {
-  const { id } = req.params;
+app.delete('/api/notes/:id', (request, response) => {
+  const { id } = request.params;
   const note = notes.filter(note => note.id === id);
 
-  res.status(204).end();
+  response.status(204).end();
 });
 
-app.listen(3000, () => {
-  console.log('Server has started on port 3000')
+app.listen(PORT, () => {
+  console.log(`Server has started on port ${PORT}`);
 })
