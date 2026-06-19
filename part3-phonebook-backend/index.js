@@ -1,7 +1,10 @@
 import express, { json } from "express";
 import morgan from 'morgan';
 import cors from 'cors';
-const PORT = 3001;
+import { configDotenv } from "dotenv";
+
+configDotenv();
+const PORT = process.env.PORT || 3001;
 const app = express();
 
 let phonebook = [
