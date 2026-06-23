@@ -1,5 +1,5 @@
 import axios from "axios";
-const URL = 'http://localhost:3001/persons/';
+const URL = '/api/persons/';
 
 const getAll = () => {
   return axios.get(URL).then(response => response.data);
@@ -14,7 +14,7 @@ const update = (id, newObject) => {
 }
 
 const remove = (id) => {
-  return axios.delete(`${URL}${id}`);
+  return axios.delete(`${URL}${id}`).then(response => response.data);
 }
 
 export default {

@@ -20,7 +20,7 @@ const App = () => {
       .then(data => {
         setPersons(data);
       })
-  }, [])
+  }, [setPersons]);
 
 
 
@@ -41,24 +41,41 @@ const App = () => {
 
   const addInfo = (event) => {
     event.preventDefault();
-    if (persons.some(person => person.name === newName)) {
-      return alert(`${newName} already exists in the phonebook`)
+    const cleanInput = newName.trim().toLowerCase();
+    if (persons.some(person => person.name.trim().toLowerCase() === cleanInput)) {
+      const personToUpdate = persons.find(person => person.name.trim().toLowerCase() === cleanInput);
+      console.log(personToUpdate);
+      const newObject = {
+        ...personToUpdate,
+        number: newNumber
+      }
+      phonebook
+        .update(personToUpdate.id, newObject)
+        .then(updatedPerson => {
+          console.log(updatedPerson);
+          setErrorMsg(`Updated ${updatedPerson.name}`);
+          setTimeout(() => {
+            setErrorMsg(null);
+          }, 3000);
+          setPersons(prevPersons => prevPersons.map(person => person.id == updatedPerson.id ? updatedPerson : person));
+        })
+    } else {
+      const newPerson = {
+        name: newName,
+        number: newNumber,
+        id: persons.length + 1
+      }
+      phonebook
+        .create(newPerson)
+        .then(newPerson => {
+          console.log(newPerson);
+          setErrorMsg(`Added ${newPerson.name}`);
+          setTimeout(() => {
+            setErrorMsg(null);
+          }, 3000)
+          setPersons(persons.concat(newPerson));
+        })
     }
-    const newPerson = {
-      name: newName,
-      number: newNumber,
-      id: persons.length + 1
-    }
-    phonebook
-      .create(newPerson)
-      .then(data => {
-        console.log(data);
-        setErrorMsg(`Added ${newPerson.name}`);
-        setTimeout(() => {
-          setErrorMsg(null);
-        }, 3000)
-        setPersons(persons.concat(data));
-      })
   }
 
   return <>
@@ -77,7 +94,11 @@ const App = () => {
                 phonebook
                   .remove(person.id)
                   .then(response => {
-                    console.log(response.name);
+                    setErrorMsg(`Deleted ${response.name}`);
+                    setTimeout(() => {
+                      setErrorMsg(null);
+                    }, 3000)
+                    setPersons(persons.filter(person => person.name !== response.name));
                   });
               } else {
                 alert(`You have cancelled the removal of ${person.name}`)
@@ -91,11 +112,12 @@ const App = () => {
               if (confirm(`Delete ${person.name} ?`)) {
                 phonebook
                   .remove(person.id)
-                  .then((response) => {
-                    setErrorMsg(`Deleted ${response.data.name}`);
+                  .then(response => {
+                    setErrorMsg(`Deleted ${response.name}`);
                     setTimeout(() => {
                       setErrorMsg(null);
                     }, 3000)
+                    setPersons(persons.filter(person => person.name !== response.name));
                   });
               } else {
                 alert(`You have cancelled the removal of ${person.name}`)
