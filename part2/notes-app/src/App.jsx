@@ -20,7 +20,7 @@ const App = () => {
 
 
   const toggleImportanceOf = (id) => {
-    const url = `http://localhost:3001/notes/${id}`;
+    const url = `http://localhost:3001/api/notes/${id}`;
     const noteToEdit = notes.find((note) => note.id == id);
     const changeNote = { ...noteToEdit, important: !noteToEdit.important };
     noteService
