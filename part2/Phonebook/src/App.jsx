@@ -75,6 +75,13 @@ const App = () => {
           }, 3000)
           setPersons(persons.concat(newPerson));
         })
+        .catch(error => {
+          console.log(error.response.data.error)
+          setErrorMsg(`${error.response.data.error}`);
+          setTimeout(() => {
+            setErrorMsg(null);
+          }, 4000);
+        })
     }
   }
 
